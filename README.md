@@ -84,7 +84,6 @@ and how to set up.
 + Improved bufferline, via [bufferline.nvim](https://github.com/akinsho/bufferline.nvim)
 + Vim Sugar for UNIX shell commands, via [vim-eunuch](https://github.com/tpope/vim-eunuch)
 + URL highlighting in vim, via [vim-highlighturl](https://github.com/itchyny/vim-highlighturl)
-+ Footnote adding, via [vim-markdownfootnotes](https://github.com/vim-pandoc/vim-markdownfootnotes)
 + Highlight and navigate matching text, via [vim-matchup](https://github.com/andymass/vim-matchup)
 + Vim session handler, via [vim-obsession](https://github.com/tpope/vim-obsession)
 + Improved comman repetition, via [vim-repeat](https://github.com/tpope/vim-repeat)
@@ -94,6 +93,7 @@ and how to set up.
 + Vim pluging or tmux configuration, via [vim-tmux](https://github.com/tmux-plugins/vim-tmux)
 + User-defined mapping hint via [which-key.nvim](https://github.com/folke/which-key.nvim).
 + Show and remove trailing whitespace, via [whitespace.nvim](https://github.com/nvim-zh/whitespace.nvim)
++ Much needed auto-completion for neovim commands via [wilder.nvim](https://github.com/gelguy/wilder.nvim)
 
 # Themes
 
@@ -108,6 +108,9 @@ and how to set up.
 + Material inspired theme, via [material.nvim](https://github.com/marko-cerovac/material.nvim)
 + Theme inspired by colors frm Katsushika Hokusai, via [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim)
 + Beautiful colorscheme via [sainnhe/gruvbox-material](https://github.com/sainnhe/gruvbox-material)
++ And more.
+
+This is suspect to frequent changes so I won't document every single theme I'm trying out or using.
 
 # Adding additional LSPs
 
