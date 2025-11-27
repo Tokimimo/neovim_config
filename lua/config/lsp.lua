@@ -1,4 +1,3 @@
-local fn = vim.fn
 local api = vim.api
 local keymap = vim.keymap
 local lsp = vim.lsp
@@ -33,8 +32,6 @@ local custom_attach = function(client, bufnr)
   map("n", "<C-k>", vim.lsp.buf.signature_help)
   map("n", "<space>rn", vim.lsp.buf.rename, { desc = "varialbe rename" })
   map("n", "gr", vim.lsp.buf.references, { desc = "show references" })
-  map("n", "[d", diagnostic.goto_prev, { desc = "previous diagnostic" })
-  map("n", "]d", diagnostic.goto_next, { desc = "next diagnostic" })
   -- this puts diagnostics from opened files to quickfix
   map("n", "<space>qw", diagnostic.setqflist, { desc = "put window diagnostics to qf" })
   -- this puts diagnostics from current buffer to quickfix
@@ -42,9 +39,7 @@ local custom_attach = function(client, bufnr)
   map("n", "<space>ca", vim.lsp.buf.code_action, { desc = "LSP code action" })
   map("n", "<space>wa", vim.lsp.buf.add_workspace_folder, { desc = "add workspace folder" })
   map("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, { desc = "remove workspace folder" })
-  map("n", "<space>wl", function()
-    vim.print(vim.lsp.buf.list_workspace_folders())
-  end, { desc = "list workspace folder" })
+  map("n", "<space>wl", function() vim.print(vim.lsp.buf.list_workspace_folders()) end, { desc = "list workspace folder" })
 
   -- Set some key bindings conditional on server capabilities
   if client.server_capabilities.documentFormattingProvider then
@@ -110,13 +105,13 @@ local custom_attach = function(client, bufnr)
 end
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
 -- required by nvim-ufo
 capabilities.textDocument.foldingRange = {
     dynamicRegistration = false,
     lineFoldingOnly = true
 }
 
-local lspconfig = require("lspconfig")
 
 if utils.executable("pylsp") then
   local venv_path = os.getenv('VIRTUAL_ENV')
@@ -128,7 +123,7 @@ if utils.executable("pylsp") then
     py_path = vim.g.python3_host_prog
   end
 
-  lspconfig.pylsp.setup {
+  vim.lsp.config('pylsp',{
     on_attach = custom_attach,
     settings = {
       pylsp = {
@@ -160,22 +155,15 @@ if utils.executable("pylsp") then
       debounce_text_changes = 200,
     },
     capabilities = capabilities,
-  }
+  })
+
+  vim.lsp.enable('pylsp')
 else
   vim.notify("pylsp not found!", vim.log.levels.WARN, { title = "Nvim-config" })
 end
 
--- if utils.executable('pyright') then
---   lspconfig.pyright.setup{
---     on_attach = custom_attach,
---     capabilities = capabilities
---   }
--- else
---   vim.notify("pyright not found!", vim.log.levels.WARN, {title = 'Nvim-config'})
--- end
-
 if utils.executable("ltex-ls") then
-  lspconfig.ltex.setup {
+  vim.lsp.config('ltex', {
     on_attach = custom_attach,
     cmd = { "ltex-ls" },
     filetypes = { "text", "plaintex", "tex", "markdown" },
@@ -185,44 +173,52 @@ if utils.executable("ltex-ls") then
       },
     },
     flags = { debounce_text_changes = 300 },
-}
+  })
+
+  vim.lsp.enable('ltex')
 end
 
 if utils.executable("clangd") then
-  lspconfig.clangd.setup {
+  vim.lsp.config('clangd', {
     on_attach = custom_attach,
     capabilities = capabilities,
     filetypes = { "c", "cpp", "cc" },
     flags = {
       debounce_text_changes = 500,
     },
-  }
+  })
+
+  vim.lsp.enable('clangd')
 end
 
 -- set up vim-language-server
 if utils.executable("vim-language-server") then
-  lspconfig.vimls.setup {
+  vim.lsp.config('vimls', {
     on_attach = custom_attach,
     flags = {
       debounce_text_changes = 500,
     },
     capabilities = capabilities,
-  }
+  })
+
+  vim.lsp.enable('vimls')
 else
   vim.notify("vim-language-server not found!", vim.log.levels.WARN, { title = "Nvim-config" })
 end
 
 -- set up bash-language-server
 if utils.executable("bash-language-server") then
-  lspconfig.bashls.setup {
+  vim.lsp.config('bashls', {
     on_attach = custom_attach,
     capabilities = capabilities,
-  }
+  })
+
+  vim.lsp.enable('bashls')
 end
 
 if utils.executable("lua-language-server") then
   -- settings for lua-language-server can be found on https://github.com/LuaLS/lua-language-server/wiki/Settings .
-  lspconfig.lua_ls.setup {
+  vim.lsp.config('lua_ls', {
     on_attach = custom_attach,
     settings = {
       Lua = {
@@ -233,29 +229,55 @@ if utils.executable("lua-language-server") then
       },
     },
     capabilities = capabilities,
-  }
+  })
+
+  vim.lsp.enable('lua_ls')
+end
+
+if utils.executable('sql-language-server') then
+  vim.lsp.config('sqlls', {
+    on_attach = custom_attach,
+  })
+
+  vim.lsp.enable('sqlls')
+end
+
+if utils.executable('helm_ls') then
+  vim.lsp.config('helm_ls', {
+    on_attach = custom_attach,
+  })
+
+  vim.lsp.enable('helm_ls')
+end
+
+if utils.executable('yaml-language-server') then
+  vim.lsp.config('yamlls', {
+    on_attach = custom_attach,
+  })
+
+  vim.lsp.enable('yamlls')
 end
 
 -- Change diagnostic signs.
-fn.sign_define("DiagnosticSignError", { text = '🆇', texthl = "DiagnosticSignError" })
-fn.sign_define("DiagnosticSignWarn", { text = '⚠️', texthl = "DiagnosticSignWarn" })
-fn.sign_define("DiagnosticSignInfo", { text = 'ℹ️', texthl = "DiagnosticSignInfo" })
-fn.sign_define("DiagnosticSignHint", { text = '', texthl = "DiagnosticSignHint" })
-
--- global config for diagnostic
-diagnostic.config {
+diagnostic.config({
   underline = false,
   virtual_text = false,
-  signs = true,
   severity_sort = true,
-}
-
--- lsp.handlers["textDocument/publishDiagnostics"] = lsp.with(lsp.diagnostic.on_publish_diagnostics, {
---   underline = false,
---   virtual_text = false,
---   signs = true,
---   update_in_insert = false,
--- })
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = '❌',
+      [vim.diagnostic.severity.WARN] = '⚠️',
+      [vim.diagnostic.severity.INFO] = 'ℹ️',
+      [vim.diagnostic.severity.HINT] = ''
+    },
+    texthl = {
+      [vim.diagnostic.severity.ERROR] = 'DiagnosticSignError',
+      [vim.diagnostic.severity.WARN] = 'DiagnosticSignWarn',
+      [vim.diagnostic.severity.INFO] = 'DiagnosticSignInfo',
+      [vim.diagnostic.severity.HINT] = 'DiagnosticSignHint'
+    },
+  },
+})
 
 -- Change border of documentation hover window, See https://github.com/neovim/neovim/pull/13998.
 lsp.handlers["textDocument/hover"] = lsp.with(vim.lsp.handlers.hover, {

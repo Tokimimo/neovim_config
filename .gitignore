@@ -1,2 +1,5 @@
 # Ignore Jetbrains folder
 .idea/
+
+# Ignore Mac folder
+.DS_Store

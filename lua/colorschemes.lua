@@ -69,9 +69,6 @@ M.colorscheme_conf = {
     end,
     tokyonight = function()
         vim.cmd("colorscheme tokyonight-moon")
-    end,
-    cyberdream = function()
-        vim.cmd("colorscheme cyberdream")
     end
 }
 
